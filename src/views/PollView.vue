@@ -2,26 +2,44 @@
     <div class="container">
         <h2>Polls</h2>
         <div class="create-poll">
-            <form>
+            <form @submit.prevent="submitPoll">
                 <div>
                     <label for="poll-question">Poll Question:</label><br>
-                    <input type="text" id="poll-question" name="poll-question"><br>
+                    <input type="text" id="poll-question" name="poll-question" v-model="poll_title"><br>
                 </div>
                 <div>
                     <label for="poll-option-1">Option 1:</label><br>
-                    <input type="text" id="poll-option-1" name="poll-option-1"><br>
+                    <input type="text" id="poll-option-1" name="poll-option-1" v-model="choices[0].name"><br>
                 </div>
                 <div>
                     <label for="poll-option-2">Option 2:</label><br>
-                    <input type="text" id="poll-option-2" name="poll-option-2"><br>
+                    <input type="text" id="poll-option-2" name="poll-option-2" v-model="choices[1].name"><br>
                 </div>
-                <input type="submit" value="Submit">
+
+                <div class="extra-options" v-for="(choice, index) in extra_choices" :key="choice.name">
+                    <label for="poll-option-2">Option {{ 3 + index }}:</label><br>
+                    <input type="text" id="poll-option-2" name="poll-option-2" v-model="extra_choices[index].name"><br>
+                </div>
+
+                <div class="privacy-toggle">
+                    <p>Make results public:</p>
+                    <label class="toggle-container">
+                        <input type="checkbox" :checked="is_public">
+                        <span class="toggle">
+                            <span class="toggle-handle"></span>
+                        </span>
+                    </label>
+                </div>
+
+                <button type="button" id="add-option-button" :disabled="extra_choices.length >= 2" @click="addChoice">Add Option</button>
+                <input type="submit" value="Create Poll">
             </form>
         </div>
 
         <div class="polls">
-            <p>Your Polls</p>
-            <PollBox />
+            <p>{{ this.loading ? 'Loading Polls...' : 'Your Polls'}}</p>
+            <p v-if="polls.length == 0 && !loading">You have no polls currently</p>
+            <PollBox v-for="poll in polls" :key="poll._id" :title="poll.title" :options="poll.options" :total_votes="poll.total_votes" v-else/>
         </div>
     </div>
 </template>
@@ -35,11 +53,100 @@ export default {
     data(){
         return {
             polls: [],
-            choices: [{ value: "" }, { value: "" }],
+            poll_title: "",
+            choices: [
+                { 
+                    name: "", 
+                    validator(){ 
+                        if(this.name.length < 3) this.valid = false; else this.valid = true
+                    },
+                    valid: false 
+                }, 
+                { 
+                    name: "", 
+                    validator(){ 
+                        if(this.name.length < 3) this.valid = false; else this.valid = true
+                    },
+                    valid: false 
+                }
+            ],
+            extra_choices: [],
+            is_public: true,
             loading: true
         }
     },
+    methods: {
+        addChoice(){
+            this.extra_choices.push(
+                { 
+                    name: "", 
+                    validator(){ 
+                        if(this.name.length < 3) this.valid = false; else this.valid = true
+                    },
+                    valid: false 
+                })
+        },
+        submitPoll(){
+            let options = this.choices.concat(this.extra_choices)
+            options.forEach(option => option.validator())
+            let invalid = options.some((option) => option.valid == false)
+            if (invalid){
+                return 
+            }
+
+            options.forEach((option) => delete option.valid)
+            fetch('http://localhost:3000/polls', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.$store.state.access_token}`
+                },
+                body: JSON.stringify({ options, title: this.poll_title, public: this.is_public })
+            })
+                .then((res) => {
+                    if(res.status != 200) throw Error()
+                    res.json()
+                })
+                .then((data) => {
+                    console.log(data)
+                })
+                .catch(() => {
+                    this.$store.commit('CLEAR_ACCESS_TOKEN')
+                })
+        }
+    },
+
     beforeMount(){
+        fetch('http://localhost:3000/polls', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${this.$store.state.access_token}`
+                }
+            })
+                .then((res) => {
+                    if(res.status != 200) throw Error()
+                    return res.json()
+                })
+                .then(data => {
+                    this.loading = false
+                    this.polls = data.polls
+                    console.log(data.polls)
+                    this.polls = this.polls.map((poll) => {
+                        let total_votes = poll.options.reduce(option => option.votes)
+                        poll.total_votes = total_votes
+
+                        poll.options = poll.options.map((option) => {
+                            if (total_votes) option.percentage = Math.round((option.votes / total_votes) * 100);
+                            else option.percentage = 0
+                            return option
+                        })
+                        return poll
+                    })
+                })
+                .catch(() => {
+                    this.loading = false
+                })
     }
 }
 </script>
@@ -80,6 +187,67 @@ input[type="submit"] {
   font-weight: bold;
   cursor: pointer;
   line-height: 0;
+}
+#add-option-button {
+  width: 100%;
+  height: 40px;
+  background-color: #b819d8;
+  border: none;
+  border-radius: 3px;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+  line-height: 0;
+}
+
+
+/* TOGGLE SECTION */
+.privacy-toggle{
+    display: flex;
+    align-items: center;
+}
+.privacy-toggle > p{
+    margin-right: 12px;
+}
+
+.toggle-container {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  height: 26px;
+}
+
+.toggle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  border-radius: 34px;
+  background-color: rgb(255, 255, 255);
+}
+
+.toggle-handle {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 26px;
+  background-color: rgb(123, 121, 121);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+input[type="checkbox"] {
+  visibility: hidden;
+}
+
+input[type="checkbox"]:checked + .toggle .toggle-handle {
+  left: calc(100% - 30px);
+  background-color: #058154;
 }
 
 </style>

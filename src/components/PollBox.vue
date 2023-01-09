@@ -3,38 +3,41 @@
 <div class="poll">
   <!-- Poll question -->
   <div class="poll-question">
-    What is your favorite color?
+    {{ title }}
   </div>
   <!-- Poll options -->
   <div class="poll-options">
     <!-- Poll option 1 -->
-    <div class="poll-option">
-      <div class="poll-option-label">Red</div>
+    <div class="poll-option" v-for="option in options" :key="option.name">
+      <div class="poll-option-label">{{ option.name }}</div>
       <div class="poll-option-bar">
-        <div class="poll-option-bar-fill" style="width: 60%;"></div>
+        <div class="poll-option-bar-fill" :style="`width: ${option.percentage}%;`"></div>
       </div>
-      <div class="poll-option-votes">60%</div>
+      <div class="poll-option-votes">{{ option.percentage }}%</div>
     </div>
-    <!-- Poll option 2 -->
-    <div class="poll-option">
-      <div class="poll-option-label">Green</div>
-      <div class="poll-option-bar">
-        <div class="poll-option-bar-fill" style="width: 20%;"></div>
-      </div>
-      <div class="poll-option-votes">20%</div>
-    </div>
-    <!-- Poll option 3 -->
-    <div class="poll-option">
-      <div class="poll-option-label">Blue</div>
-      <div class="poll-option-bar">
-        <div class="poll-option-bar-fill" style="width: 20%;"></div>
-      </div>
-      <div class="poll-option-votes">20%</div>
+  </div>
+  <div class="poll-details">
+    <p>{{ total_votes }} votes</p>
+    <div class="share-icons">
+        <img src="@/assets/icons/socials/whatsapp.png" alt="whatsapp">
+        <img src="@/assets/icons/socials/twitter.png" alt="twitter">
+        <img src="@/assets/icons/socials/facebook.png" alt="facebook">
     </div>
   </div>
 </div>
 </template>
-
+<script>
+export default {
+    props: {
+        title: String,
+        options: Array,
+        total_votes: Number
+    },
+    data(){
+        return {}
+    }
+}
+</script>
 <style scoped>
 /* Poll container */
 .poll {
@@ -43,6 +46,7 @@
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  margin-bottom: 12px;
 }
 
 /* Poll question */
@@ -100,5 +104,24 @@
     margin: 0 auto;
     width: 85%;
 }
+.poll p {
+    padding: 0;
+    margin: 0;
+}
 
+.poll .poll-details{
+    display: flex;
+    justify-content: space-between;
+}
+
+.poll-details .share-icons{
+    display: flex;
+    justify-content: space-around;
+    width: 40%;
+}
+
+.share-icons img{
+    width: 30px;
+    height: 30px;
+}
 </style>

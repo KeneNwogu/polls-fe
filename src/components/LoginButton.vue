@@ -18,7 +18,8 @@ export default {
     },
     methods: {
         login(){
-            this.$auth0.loginWithRedirect()
+            if(!this.$store.state.access_token) this.$auth0.loginWithRedirect()
+            this.$router.push('/polls')
         }
     }
 }

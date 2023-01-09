@@ -10,6 +10,9 @@ export default createStore({
   mutations: {
     SET_ACCESS_TOKEN(state, token){
       state.access_token = token
+    },
+    CLEAR_ACCESS_TOKEN(state){
+      state.access_token = null
     }
   },
   actions: {
