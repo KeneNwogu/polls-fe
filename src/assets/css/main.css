@@ -1,0 +1,58 @@
+body {
+    background: #020e18;
+    color: #fff;
+    font-size: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    box-sizing: border-box;
+}
+
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
+p{
+    font-size: 21px;
+    line-height: 1.9;
+    /* word-break: break-all; */
+}
+
+.header, .secondary{
+    margin: 0 auto;
+    padding: 0 30px;
+    margin-bottom: 100px;
+}
+
+h3.secondary-header{
+    margin: 0 auto;
+    padding: 0 30px;
+    font-size: 1.9em;
+    margin: 1.2em 0;
+}
+
+.get-started-btn{
+    margin-top: 10px;
+    padding: 15px 40px;
+    font-size: 1.43em;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+}
+
+.container{
+    margin: 100px auto;
+    padding: 0 20px;
+}
+
+.create-poll input{
+    display: block;
+    /* margin: 1rem 0; */
+    padding: 0 0 0 0;
+    width: 100%;
+}
+
+.create-poll button{
+    padding: 1.1em;
+    font-size: 0.9em;
+    width: 16rem;
+}
