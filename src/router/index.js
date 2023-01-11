@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AuthorizeView from '../views/AuthorizeView.vue'
 import PollView from '@/views/PollView.vue'
+import VotePollView from '@/views/VotePollView.vue'
 import store from '@/store'
 
 const routes = [
@@ -27,6 +28,11 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
+  },
+  {
+    path: '/polls/:id',
+    name: 'vote',
+    component: VotePollView
   }
 ]
 
@@ -36,6 +42,7 @@ const router = createRouter({
 })
 
 const protectedRoutes = ['polls']
+
 router.beforeEach((to, from, next) => {
     if (protectedRoutes.includes(to.name) && !store.state.access_token){
         next("/");

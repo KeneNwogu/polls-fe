@@ -39,7 +39,7 @@
         <div class="polls">
             <p>{{ this.loading ? 'Loading Polls...' : 'Your Polls'}}</p>
             <p v-if="polls.length == 0 && !loading">You have no polls currently</p>
-            <PollBox v-for="poll in polls" :key="poll._id" :title="poll.title" :options="poll.options" :total_votes="poll.total_votes" v-else/>
+            <PollBox v-for="poll in polls" :key="poll._id" :id="poll._id" :title="poll.title" :options="poll.options" :total_votes="poll.total_votes" v-else/>
         </div>
     </div>
 </template>
@@ -130,22 +130,23 @@ export default {
                 })
                 .then(data => {
                     this.loading = false
-                    this.polls = data.polls
-                    console.log(data.polls)
-                    this.polls = this.polls.map((poll) => {
-                        let total_votes = poll.options.reduce(option => option.votes)
-                        poll.total_votes = total_votes
+                    this.$store.commit('SET_POLLS', data.polls)
+                    this.polls = this.$store.state.polls
+                    // this.polls = this.polls.map((poll) => {
+                    //     let total_votes = poll.options.reduce(option => option.votes)
+                    //     poll.total_votes = total_votes
 
-                        poll.options = poll.options.map((option) => {
-                            if (total_votes) option.percentage = Math.round((option.votes / total_votes) * 100);
-                            else option.percentage = 0
-                            return option
-                        })
-                        return poll
-                    })
+                    //     poll.options = poll.options.map((option) => {
+                    //         if (total_votes) option.percentage = Math.round((option.votes / total_votes) * 100);
+                    //         else option.percentage = 0
+                    //         return option
+                    //     })
+                    //     return poll
+                    // })
                 })
                 .catch(() => {
                     this.loading = false
+                    this.$store.commit('CLEAR_ACCESS_TOKEN')
                 })
     }
 }
