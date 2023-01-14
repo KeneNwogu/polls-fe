@@ -44,7 +44,6 @@ export default createStore({
       poll.options = poll.options.map((option) => {
         if (total_votes) option.percentage = Math.round((option.votes / total_votes) * 100);
         else option.percentage = 0
-        // console.log(Math.round((option.votes / total_votes) * 100))
         return option
       })
 
@@ -65,7 +64,6 @@ export default createStore({
     },
 
     VOTE_POLL(state, { poll_id, option_id, from_socket=false }){
-      console.log(from_socket)
       let index = state.voted_polls.findIndex(p => p._id == poll_id)
       if(index !== -1){
         let poll = state.voted_polls[index]
@@ -74,8 +72,6 @@ export default createStore({
         let option_index = poll.options.findIndex(o => o._id == option_id)
         if(option_index !== -1){
           poll.options[option_index].votes += 1
-          console.log(poll.options[option_index]._id, option_id)
-          console.log(poll.options[option_index].name)
           if(!from_socket) {
             poll.voted = true
             poll.options[option_index].voted = true

@@ -43,9 +43,7 @@ export default {
         this.$socket.on('poll_voted', ({ poll_id, option_id }) => {
             // update poll 
             // play some animations maybe?
-            console.log('voted from socket')
             let option = document.querySelector(`.el-${option_id}`)
-            console.log(option);
             option.classList.add('new-vote')
             option.style.width = `calc(${this.poll.options.find(o => o._id == option_id).percentage + '2px'})`
             setTimeout(() => {
@@ -78,7 +76,6 @@ export default {
 
                 this.loading = false
                 this.$socket.on('connect', () => {
-                    console.log('connected from view')
                 })
             })
 

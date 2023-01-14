@@ -126,7 +126,9 @@ export default {
                     res.json()
                 })
                 .then((data) => {
-                    console.log(data)
+                    this.polls.push(data.poll)
+                    this.$store.commit('SET_POLLS', this.polls)
+                    this.polls = this.$store.state.polls
                 })
                 .catch(() => {
                     this.$store.commit('CLEAR_ACCESS_TOKEN')
@@ -150,17 +152,6 @@ export default {
                     this.loading = false
                     this.$store.commit('SET_POLLS', data.polls)
                     this.polls = this.$store.state.polls
-                    // this.polls = this.polls.map((poll) => {
-                    //     let total_votes = poll.options.reduce(option => option.votes)
-                    //     poll.total_votes = total_votes
-
-                    //     poll.options = poll.options.map((option) => {
-                    //         if (total_votes) option.percentage = Math.round((option.votes / total_votes) * 100);
-                    //         else option.percentage = 0
-                    //         return option
-                    //     })
-                    //     return poll
-                    // })
                 })
                 .catch(() => {
                     this.loading = false
