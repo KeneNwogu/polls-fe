@@ -31,9 +31,11 @@ export default {
     },
     methods: {
         title(string){
-            string = string.toLowerCase()
-            string = string[0].toUpperCase() + string.split('').splice(1).join('')
-            return string
+            if(string){
+                string = string.toLowerCase()
+                string = string[0].toUpperCase() + string.split('').splice(1).join('')
+                return string
+            }
         }
     },
     mounted(){
@@ -64,18 +66,17 @@ export default {
                     throw Error('invalid-poll')
                 }
                 else{
-                    this.loading = false
                     return res.json()
                 }
             })
             .then(data => {
-                this.$store.commit('ADD_VOTING_POLL', data.poll);
                 this.username = data.username
+                this.$store.commit('ADD_VOTING_POLL', data.poll);
                 let filter = this.$store.state.voted_polls.filter((poll) => poll._id == data.poll._id)
                 if (filter.length == 1) this.poll = filter[0]
                 else throw Error('invalid-poll')
 
-                console.log(this.poll)
+                this.loading = false
                 this.$socket.on('connect', () => {
                     console.log('connected from view')
                 })

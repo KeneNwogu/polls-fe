@@ -88,6 +88,29 @@ export default createStore({
     }
   },
   actions: {
+    updatePoll({ state, commit }, { poll_id, option_id }){
+      let polls = state.polls
+      let index = polls.findIndex(p => p._id == poll_id)
+      if(index !== -1){
+        let poll = polls[index]
+        poll.total_votes += 1
+        let total_votes = poll.total_votes
+        let option_index = poll.options.findIndex(o => o._id == option_id)
+
+        if(option_index !== -1){
+          poll.options[option_index].votes += 1
+        }
+
+        poll.options.forEach((option, index) => {
+          option.votes = poll.options[index].votes
+          if (total_votes) option.percentage = Math.round((option.votes / total_votes) * 100);
+          else option.percentage = 0
+        })
+
+        polls[index] = poll
+        commit('SET_POLLS', polls)
+      }
+    }
   },
   modules: {
   },

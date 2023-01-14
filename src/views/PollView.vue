@@ -76,7 +76,22 @@ export default {
         }
     },
     mounted(){
+        this.$socket.on('poll_voted', ({ poll_id, option_id }) => {
+            // update poll 
+            // play some animations maybe?
+            let index = this.polls.findIndex(p => p._id == poll_id)
+            if (index !== -1) {
+                let option = document.querySelector(`.el-${option_id}`)
+                option.classList.add('new-vote')
+                option.style.width = `calc(${this.polls[index].options.find(o => o._id == option_id).percentage + '2px'})`
+                setTimeout(() => {
+                    option.classList.remove('new-vote')
+                }, 2000)
 
+                this.$store.dispatch('updatePoll', { poll_id, option_id })
+                this.polls = this.$store.state.polls
+            }
+        })
     },
     methods: {
         addChoice(){
