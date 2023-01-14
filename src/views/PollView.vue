@@ -58,14 +58,14 @@ export default {
                 { 
                     name: "", 
                     validator(){ 
-                        if(this.name.length < 3) this.valid = false; else this.valid = true
+                        if(this.name.length < 2) this.valid = false; else this.valid = true
                     },
                     valid: false 
                 }, 
                 { 
                     name: "", 
                     validator(){ 
-                        if(this.name.length < 3) this.valid = false; else this.valid = true
+                        if(this.name.length < 2) this.valid = false; else this.valid = true
                     },
                     valid: false 
                 }
@@ -99,7 +99,7 @@ export default {
                 { 
                     name: "", 
                     validator(){ 
-                        if(this.name.length < 3) this.valid = false; else this.valid = true
+                        if(this.name.length < 2) this.valid = false; else this.valid = true
                     },
                     valid: false 
                 })
@@ -108,7 +108,8 @@ export default {
             let options = this.choices.concat(this.extra_choices)
             options.forEach(option => option.validator())
             let invalid = options.some((option) => option.valid == false)
-            if (invalid){
+
+            if (invalid || this.poll_title.length < 2){
                 return 
             }
 
@@ -123,12 +124,11 @@ export default {
             })
                 .then((res) => {
                     if(res.status != 200) throw Error()
-                    res.json()
+                    return res.json()
                 })
                 .then((data) => {
                     this.polls.push(data.poll)
                     this.$store.commit('SET_POLLS', this.polls)
-                    this.polls = this.$store.state.polls
                 })
                 .catch(() => {
                     this.$store.commit('CLEAR_ACCESS_TOKEN')
