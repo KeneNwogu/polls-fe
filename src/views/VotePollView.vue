@@ -1,5 +1,6 @@
 <template>
     <div class="container" v-if="!error">
+        <div class="title" style="margin-bottom: 20px" v-if="!loading">Vote on {{ title(username) }}'s poll!</div>
         <PollBox 
             :id="poll._id"
             :title="poll.title" 
@@ -23,7 +24,16 @@ export default {
     data(){
         return {
             poll: {},
-            error: null
+            error: null,
+            username: "",
+            loading: true
+        }
+    },
+    methods: {
+        title(string){
+            string = string.toLowerCase()
+            string = string[0].toUpperCase() + string.split('').splice(1).join('')
+            return string
         }
     },
     mounted(){
@@ -54,12 +64,13 @@ export default {
                     throw Error('invalid-poll')
                 }
                 else{
+                    this.loading = false
                     return res.json()
                 }
             })
             .then(data => {
                 this.$store.commit('ADD_VOTING_POLL', data.poll);
-
+                this.username = data.username
                 let filter = this.$store.state.voted_polls.filter((poll) => poll._id == data.poll._id)
                 if (filter.length == 1) this.poll = filter[0]
                 else throw Error('invalid-poll')

@@ -75,6 +75,9 @@ export default {
             loading: true
         }
     },
+    mounted(){
+
+    },
     methods: {
         addChoice(){
             this.extra_choices.push(
