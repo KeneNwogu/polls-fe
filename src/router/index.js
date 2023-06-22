@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AuthorizeView from '../views/AuthorizeView.vue'
 import PollView from '@/views/PollView.vue'
 import VotePollView from '@/views/VotePollView.vue'
+import TestChatView from "@/views/TestChatView.vue"
 import store from '@/store'
 
 const routes = [
@@ -33,6 +34,11 @@ const routes = [
     path: '/polls/:id',
     name: 'vote',
     component: VotePollView
+  },
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: TestChatView
   }
 ]
 

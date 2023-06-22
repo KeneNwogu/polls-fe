@@ -25,7 +25,9 @@
   <div class="poll-details">
     <p>{{ total_votes }} votes</p>
     <div class="share-icons">
-        <img src="@/assets/icons/socials/whatsapp.png" alt="whatsapp" @click="shareOnWhatsAppStatus">
+        <a :href="whatsapp_link" data-action="share/whatsapp/share">
+          <img src="@/assets/icons/socials/whatsapp.png" alt="whatsapp">
+        </a>
         <img src="@/assets/icons/socials/twitter.png" alt="twitter">
         <img src="@/assets/icons/socials/facebook.png" alt="facebook">
     </div>
@@ -51,7 +53,8 @@ export default {
     },
     data(){
         return {
-          socket: null
+          socket: null,
+          whatsapp_link: ""
         }
     },
     methods: {
@@ -61,15 +64,16 @@ export default {
         this.$store.commit('VOTE_POLL', { poll_id, option_id })
       },
       shareOnWhatsAppStatus() {
-        let options_text = this.options.join(' or ')
-        let text = `📊 Hey friends! I need your opinion on something. 
-        ${this.title}? Share this message and let me know your answer by voting ${options_text}. 
-        I won't know what you picked 😉
-        #PollTime #YourOpinionMatters`
-
-        let url = `https://wa.me/whatsappstatus/${encodeURIComponent(text)}`
-        window.open(url)
+        
       }
+    },
+    mounted(){
+      let options_text = this.options.join(' or ')
+      let text = `📊 Hey friends! I need your opinion on something. 
+      ${this.title}? Share this message and let me know your answer by voting ${options_text}. 
+      I won't know what you picked 😉
+      #PollTime #YourOpinionMatters`
+      this.whatsapp_link = "whatsapp://send?text=" + encodeURIComponent(text)
     }
 }
 </script>
