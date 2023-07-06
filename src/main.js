@@ -5,9 +5,13 @@ import store from './store'
 // import { io } from 'socket.io-client'
 import '@/assets/css/main.css'
 import { createAuth0 } from '@auth0/auth0-vue';
+import firebaseMessaging from './firebase'
+
 
 const app = createApp(App)
 // app.config.globalProperties.$socket = io('http://localhost:3000')
+
+app.config.globalProperties.$messaging = firebaseMessaging
 
 app.use(store).use(router)
 .use(

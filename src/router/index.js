@@ -4,6 +4,7 @@ import AuthorizeView from '../views/AuthorizeView.vue'
 import PollView from '@/views/PollView.vue'
 import VotePollView from '@/views/VotePollView.vue'
 import TestChatView from "@/views/TestChatView.vue"
+import FCMTestView from '@/views/FCMTestView.vue'
 import store from '@/store'
 
 const routes = [
@@ -39,6 +40,11 @@ const routes = [
     path: '/chat',
     name: 'Chat',
     component: TestChatView
+  },
+  {
+    path: "/notif",
+    name: 'notif',
+    component: FCMTestView
   }
 ]
 
